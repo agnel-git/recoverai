@@ -1,37 +1,59 @@
-# RecoverAI — AI Revenue Recovery Agent (hackathon starter)
+# RecoverAI — AI Revenue Recovery Agent
 
-```
-data-scoring/   PERSON 1  Python: synthetic data, cleaning, weighted Recovery Score  -> data/scored.json
-ai-agent/       PERSON 2  agent.js: reason-aware rules + Gemini LLM (falls back to rules without a key)
-backend/        PERSON 3  Express REST API (+ schema.sql for Postgres/Supabase)
-frontend/       PERSON 4  React + Vite + Tailwind v4 + Recharts dashboard, queue, simulator, approval
-data/           generated CSV/JSON
-```
+> An AI-assisted system for analyzing failed payments, prioritizing recovery opportunities, and recommending recovery actions.
 
-## Run it
-```bash
-# 1. data + scores (Person 1)
-cd data-scoring && pip install -r requirements.txt
-python generate_data.py && python run_pipeline.py
+## 🚀 Live Demo
 
-# 2. API (Person 3) - optional: cp .env.example .env and add GEMINI_API_KEY
-cd ../backend && npm install && npm run dev        # http://localhost:4000
+**Frontend:** [Open RecoverAI] https://recoverai-one.vercel.app/
 
-# 3. UI (Person 4)
-cd ../frontend && npm install && npm run dev       # http://localhost:5173
-```
+**Backend API:** [RecoverAI API](https://recoverai-backend-tkig.onrender.com)
 
-## Demo flow
-Dashboard -> Priority Queue -> "Run AI agent on top 15" -> click a row (score breakdown, AI reason, customer message)
--> Approve/Reject (only sets a status, never charges a card) -> Simulator (threshold slider).
+---
 
-## Contracts between modules
-- P1 -> P3: `data/scored.json` = `{ total_transactions, failed: [ {transaction_id, amount, failure_reason, recovery_score, recovery_probability, priority, expected_recovery, ...} ] }`
-- P2 -> P3: `analyzeTransaction(t) -> { action, priority, retry_after, reason, message, expected_recovery, source }`
-- P3 -> P4: endpoints in `backend/src/server.js` (`/api/dashboard`, `/api/failed-transactions`, `/api/transactions/:id`, `/api/analyze`, `/api/recovery-action`, `/api/simulator`)
+## 📌 Overview
 
-## Next steps per person
-- P1: tune `WEIGHTS` / `FAILURE_TYPE_SCORE` in `scoring.py`; add more behaviour metrics.
-- P2: improve the prompt in `agent.js`; add A/B of rules vs LLM.
-- P3: replace `store.js` with Supabase queries using `schema.sql`.
-- P4: polish UI, add customer view, loading/error states.
+RecoverAI is an AI-assisted payment recovery prototype designed to help businesses identify failed transactions that have a higher likelihood of recovery.
+
+The system:
+
+- Generates and processes failed-payment data
+- Calculates a Recovery Score and recovery probability
+- Prioritizes failed transactions
+- Uses an AI agent to analyze failed payments
+- Recommends an appropriate recovery action
+- Generates a customer-facing recovery message
+- Provides a dashboard for monitoring recovery opportunities
+- Includes a simulator for experimenting with recovery thresholds
+
+> **Note:** RecoverAI is currently a prototype using synthetic transaction data. It does not actually charge cards or send real customer messages.
+
+---
+
+## 🏗️ Project Structure
+
+```text
+RecoverAI/
+│
+├── data-scoring/
+│   ├── generate_data.py
+│   ├── run_pipeline.py
+│   └── scoring.py
+│
+├── ai-agent/
+│   └── agent.js
+│
+├── backend/
+│   ├── src/
+│   ├── schema.sql
+│   └── package.json
+│
+├── frontend/
+│   ├── src/
+│   ├── vite.config.js
+│   └── package.json
+│
+├── data/
+│   ├── transactions.csv
+│   └── scored.json
+│
+└── README.md
